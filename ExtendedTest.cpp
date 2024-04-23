@@ -268,6 +268,8 @@ void testMix()
 
 void testQuantity() {//add lots of elements
 	cout << "Test quantity" << endl;
+    auto start=time(NULL);
+    time_t end;
 	Set s;
 	for (int i = 10; i >= 1; i--) {
 		for (int j = -30000; j < 30000; j = j + i) {
@@ -293,6 +295,8 @@ void testQuantity() {//add lots of elements
 		}
 	}
 	assert(s.size() == 0);
+    end=time(NULL);
+    cout<<"Duration: "<<end-start<<" seconds for quantity test"<<endl;
 }
 
 
