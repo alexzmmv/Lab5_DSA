@@ -300,7 +300,9 @@ void testQuantity() {//add lots of elements
 }
 
 
+
 // filters all elements that respect the given condition
+
 void testFilter() {
     cout<<"Test filter\n";
     // Arrange

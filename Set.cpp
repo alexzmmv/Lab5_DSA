@@ -2,7 +2,12 @@
 #include "Set.h"
 #include "SetITerator.h"
 
+
 Set::Set() {
+    /*
+     * Complexity:
+     * Tetha(1)
+     */
     elements = new Node[8];
     capacity = 8;
     for(int i = 0; i < capacity; i++) {
@@ -16,6 +21,10 @@ Set::Set() {
 }
 
 void Set::resize() {
+    /*
+     * Complexity:
+     * Tetha(capacity)
+     */
     Node* newElements = new Node[capacity << 1];
     memcpy(newElements, elements, capacity * sizeof(Node));
     delete[] elements;
@@ -32,12 +41,20 @@ void Set::resize() {
 }
 
 int Set::nextEmpty() {
+    /*
+     * Complexity:
+     * Tetha(1)
+     */
     int current=firstEmpty;
     firstEmpty = elements[firstEmpty].next;
     return current;
 }
 
 bool Set::add(TElem elem) {
+    /*
+     * Complexity:
+     * O(n) amortized
+     */
     if (_size == capacity-2) {
         resize();
     }
@@ -64,6 +81,10 @@ bool Set::add(TElem elem) {
 
 
 bool Set::remove(TElem elem) {
+    /*
+     * Complexity:
+     * Tetha(n)
+     */
     if (head == -1) {
         return false;
     }
@@ -95,6 +116,10 @@ bool Set::remove(TElem elem) {
 }
 
 bool Set::search(TElem elem) const {
+    /*
+     * Complexity:
+     * Tetha(n)
+     */
     int current = head;
     while (current != -1) {
         if (elements[current].value == elem) {
@@ -121,6 +146,10 @@ Set::~Set() {
 }
 
 void Set::filter(Condition cond) {
+    /*
+     * Complexity:
+     * Tetha(n)
+     */
     auto current=head;
     while(current!=-1){
         if(!cond(elements[current].value)){
