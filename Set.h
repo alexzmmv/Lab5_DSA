@@ -1,9 +1,10 @@
 #pragma once
 //DO NOT INCLUDE SETITERATOR
 
-//DO NOT CHANGE THIS PART
 #define NULL_TELEM -111111
 typedef int TElem;
+typedef bool(*Condition)(TElem);
+//DO NOT CHANGE THIS PART
 class SetIterator;
 
 class Set {
@@ -45,6 +46,8 @@ class Set {
         //return an iterator for the set
         SetIterator iterator() const;
 
+        //keeps in the set only elements that respect the given condition
+        void filter(Condition cond);
         // destructor
         ~Set();
 

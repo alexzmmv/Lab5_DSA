@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Set.h"
 #include "SetITerator.h"
 
@@ -11,9 +12,7 @@ Set::Set() {
 
 void Set::resize() {
     Node* newElements = new Node[capacity << 1];
-    for (int i = 0; i < capacity; i++) {
-        newElements[i] = elements[i];
-    }
+    memcpy(newElements, elements, capacity * sizeof(Node));
     delete[] elements;
 
     elements = newElements;
@@ -21,7 +20,12 @@ void Set::resize() {
 }
 
 int Set::nextEmpty() {
-    for (int i = 0; i < capacity; i++) {
+    for(int i = firstEmpty; i < capacity; i++) {
+        if (elements[i].next == -2) {
+            return i;
+        }
+    }
+    for(int i = 0; i < firstEmpty; i++) {
         if (elements[i].next == -2) {
             return i;
         }
@@ -116,9 +120,17 @@ Set::~Set() {
     delete[] elements;
 }
 
+void Set::filter(Condition cond) {
+    auto current=elements[head];
+    while (current.next!=-1){
+        if(!cond(current.value))
+            remove(current.value);
+        current=elements[current.next];
+    }
+    if(!cond(current.value))
+        remove(current.value);
+}
 
 SetIterator Set::iterator() const {
 	return SetIterator(*this);
 }
-
-

@@ -300,15 +300,70 @@ void testQuantity() {//add lots of elements
 }
 
 
+// filters all elements that respect the given condition
+void testFilter() {
+    cout<<"Test filter\n";
+    // Arrange
+    Set set;
+    set.add(1);
+    set.add(2);
+    set.add(3);
+    set.add(4);
+    set.add(5);
+
+    // Act
+    set.filter([](TElem elem) { return elem % 2 == 0; });
+    set.filter([](TElem elem) { return elem <100; });
+
+    // Assert
+    assert(set.search(1) == false);
+    assert(set.search(2) == true);
+    assert(set.search(3) == false);
+    assert(set.search(4) == true);
+    assert(set.search(5) == false);
+// removes the head element if it does not respect the given condition
+    // Arrange
+    auto set2=Set();
+    set2.add(1);
+    set2.add(2);
+    set2.add(3);
+
+    // Act
+    set2.filter([](TElem elem) { return elem % 2 == 0; });
+
+    // Assert
+    assert(set2.search(1) == false);
+    assert(set2.search(2) == true);
+    assert(set2.search(3) == false);
+// removes the last element if it does not respect the given condition
+    // Arrange
+    auto set3=Set();
+    set3.add(1);
+    set3.add(2);
+    set3.add(3);
+
+    // Act
+    set3.filter([](TElem elem) { return elem % 2 != 0; });
+
+    // Assert
+    assert(set3.search(1) == true);
+    assert(set3.search(2) == false);
+    assert(set3.search(3) == true);
+    set3.filter([](TElem elem){return false;});
+    assert(set3.isEmpty()==true);
+}
+
+
+
 // we don't know how the set is represented and in which order the elements are stored or printed, we can only test general thing
 void testAllExtended() {
-	testCreate();
-	testAdd();
-	testRemove();
-	testIterator();
-	testMix();
-	testQuantity();
-
+    testCreate();
+    testFilter();
+    testAdd();
+    testRemove();
+    testIterator();
+    testMix();
+    testQuantity();
 }
 
 
