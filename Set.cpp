@@ -3,11 +3,16 @@
 #include "SetITerator.h"
 
 Set::Set() {
-    elements = new Node[10];
-    capacity = 10;
+    elements = new Node[8];
+    capacity = 8;
+    for(int i = 0; i < capacity; i++) {
+        elements[i].next = i+1;
+    }
+    elements[capacity-1].next = -2;
     _size = 0;
     head = -1;
     firstEmpty = 0;
+    last=-1;
 }
 
 void Set::resize() {
@@ -16,46 +21,41 @@ void Set::resize() {
     delete[] elements;
 
     elements = newElements;
+    for(int i = capacity; i < capacity << 1; i++) {
+        elements[i].next = i+1;
+    }
+    int current = firstEmpty;
+    firstEmpty=capacity;
+    elements[current].next = capacity;
     capacity <<= 1;
+    elements[capacity-1].next = -2;
 }
 
 int Set::nextEmpty() {
-    for(int i = firstEmpty; i < capacity; i++) {
-        if (elements[i].next == -2) {
-            return i;
-        }
-    }
-    for(int i = 0; i < firstEmpty; i++) {
-        if (elements[i].next == -2) {
-            return i;
-        }
-    }
-    return -1;
+    int current=firstEmpty;
+    firstEmpty = elements[firstEmpty].next;
+    return current;
 }
 
 bool Set::add(TElem elem) {
-    if (_size +1 == capacity) {
+    if (_size == capacity-2) {
         resize();
     }
     // if the set is empty
     if (head == -1) {
-            head = firstEmpty;
-            elements[firstEmpty].value = elem;
-            elements[firstEmpty].next = -1;
-            firstEmpty++;
-            _size++;
+        head = nextEmpty();
+        elements[head].value = elem;
+        elements[head].next = -1;
+        last = head;
+        _size++;
             return true;
     }
     // if the element is not already in the set
     if(!search(elem)) {
-        int current = head;
-        while (elements[current].next != -1) {
-            current = elements[current].next;
-        }
-        elements[current].next = firstEmpty;
-        elements[firstEmpty].value = elem;
-        elements[firstEmpty].next = -1;
-        firstEmpty=nextEmpty();
+        elements[last].next = firstEmpty;
+        last = nextEmpty();
+        elements[last].value = elem;
+        elements[last].next = -1;
         _size++;
         return true;
     }
@@ -67,13 +67,13 @@ bool Set::remove(TElem elem) {
     if (head == -1) {
         return false;
     }
-    // if the element is the head
     if (elements[head].value == elem) {
-        int current = head;
+        // if the element is the head
+        int toDelete = head;
         head = elements[head].next;
-        elements[current].next = -2;
-        elements[current].value = NULL_TELEM;
-        firstEmpty = current;
+        elements[toDelete].next = firstEmpty;
+        elements[toDelete].value = NULL_TELEM;
+        firstEmpty = toDelete;
         _size--;
         return true;
     }
@@ -82,8 +82,8 @@ bool Set::remove(TElem elem) {
     while (elements[current].next != -1) {
         if (elements[elements[current].next].value == elem) {
             int toDelete = elements[current].next;
-            elements[current].next = elements[toDelete].next;
-            elements[toDelete].next = -2;
+            elements[current].next = elements[elements[current].next].next;
+            elements[toDelete].next = firstEmpty;
             elements[toDelete].value = NULL_TELEM;
             firstEmpty = toDelete;
             _size--;
@@ -121,14 +121,31 @@ Set::~Set() {
 }
 
 void Set::filter(Condition cond) {
-    auto current=elements[head];
-    while (current.next!=-1){
-        if(!cond(current.value))
-            remove(current.value);
-        current=elements[current.next];
+    auto current=head;
+    while(current!=-1){
+        if(!cond(elements[current].value)){
+            if(current==head){
+                head=elements[current].next;
+                elements[current].next=firstEmpty;
+                firstEmpty=current;
+                current=head;
+            }
+            else{
+                auto prev=head;
+                while(elements[prev].next!=current){
+                    prev=elements[prev].next;
+                }
+                elements[prev].next=elements[current].next;
+                elements[current].next=firstEmpty;
+                firstEmpty=current;
+                current=elements[prev].next;
+            }
+            _size--;
+        }
+        else{
+            current=elements[current].next;
+        }
     }
-    if(!cond(current.value))
-        remove(current.value);
 }
 
 SetIterator Set::iterator() const {

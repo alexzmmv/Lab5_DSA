@@ -349,6 +349,9 @@ void testFilter() {
     assert(set3.search(1) == true);
     assert(set3.search(2) == false);
     assert(set3.search(3) == true);
+    for(int i=4;i<100;i++)
+        set3.add(i);
+
     set3.filter([](TElem elem){return false;});
     assert(set3.isEmpty()==true);
 }

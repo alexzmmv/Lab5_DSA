@@ -20,6 +20,7 @@ class Set {
         int _size;
         int head;
         int firstEmpty;
+        int last;
         void resize();
         int nextEmpty();
     public:
